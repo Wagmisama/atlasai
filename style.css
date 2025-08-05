@@ -1,0 +1,35 @@
+body {
+	padding: 2rem;
+	font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
+}
+
+h1 {
+	font-size: 16px;
+	margin-top: 0;
+}
+
+p {
+	color: rgb(107, 114, 128);
+	font-size: 15px;
+	margin-bottom: 10px;
+	margin-top: 5px;
+}
+
+.card {
+	max-width: 620px;
+	margin: 0 auto;
+	padding: 16px;
+	border: 1px solid lightgray;
+	border-radius: 16px;
+}
+
+.card p:last-child {
+	margin-bottom: 0;
+}
+.spline-container {
+    background: radial-gradient(circle at center, 
+        rgba(58, 130, 246, 0.2) 0%, 
+        rgba(74, 222, 128, 0.1) 50%, 
+        rgba(15, 23, 42, 0.8) 100%);
+    /* Keep all other properties the same */
+}

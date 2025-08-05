@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLASAI - AI Agents for Businesses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    dark: {
+                        900: '#0a0a0a',
+                        800: '#1a1a1a',
+                        700: '#2a2a2a',
+                        600: '#333333',
+                    }
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    }
+                }
+            }
+        }
+    }
+    </script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.39/build/spline-viewer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            scroll-behavior: smooth;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+        
+        .glow-box {
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+        
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #4ade80, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .page-transition {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .spline-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('gradient.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 1000px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+            min-width: 800px;
+            min-height: 800px;
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto;
+            transform: scale(1);
+        }
+        
+        @media (max-width: 768px) {
+            .spline-container {
+                height: 300px;
+            }
+        }
+
+        body {
+  margin: 0;
+  background: #000;
+  font-family: sans-serif;
+}
+
+.tech-marquee {
+  position: relative;
+  overflow: hidden;
+  background: #0c0c0c;
+  padding: 30px 0;
+}
+
+.marquee {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-content {
+  display: flex;
+  animation: scroll 25s linear infinite;
+}
+
+.marquee-content img {
+  height: 30px;
+  margin: 0 40px;
+  filter: grayscale(100%) brightness(0.6);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.marquee-content img:hover {
+  transform: scale(1.15);
+  filter: none;
+}
+
+/* Gradient fade edges */
+.fade-left, .fade-right {
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.fade-left {
+  left: 0;
+  background: linear-gradient(to right, #000 0%, transparent 100%);
+}
+
+.fade-right {
+  right: 0;
+  background: linear-gradient(to left, #000 0%, transparent 100%);
+}
+
+/* Scroll animation */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Responsive image sizing */
+@media (max-width: 768px) {
+  .marquee-content img {
+    height: 40px;
+    margin: 0 20px;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Floating Chat Button -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button id="chat-button" class="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-green-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 glow">
+        <i class="fas fa-comment-dots text-2xl"></i>
+    </button>
+</div>
+    <!-- Floating elements -->
+<div class="fixed top-1/4 left-10 w-4 h-4 rounded-full bg-green-400 opacity-30 animate-[float_6s_ease-in-out_infinite] hidden md:block"></div>
+<div class="fixed top-1/3 right-20 w-6 h-6 rounded-full bg-blue-400 opacity-20 animate-[float_6s_ease-in-out_infinite] animation-delay-2000 hidden md:block"></div>
+<div class="fixed bottom-1/4 left-1/4 w-8 h-8 rounded-full bg-green-300 opacity-20 animate-[float_6s_ease-in-out_infinite] animation-delay-3000 hidden md:block"></div>
+<div class="fixed bottom-1/3 right-1/4 w-5 h-5 rounded-full bg-blue-300 opacity-30 animate-[float_6s_ease-in-out_infinite] animation-delay-1000 hidden md:block"></div>
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-dark-900 bg-opacity-80 backdrop-blur-md z-50 border-b border-dark-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl font-bold gradient-text">ATLASAI</span>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white hover:text-green-400 transition">Home</a>
+                            <a href="#features" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">Features</a>
+                            <a href="#use-cases" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">Use Cases</a>
+                            <a href="#pricing" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">Pricing</a>
+                            <a href="#faqs" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">FAQs</a>
+                            <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">About</a>
+                            <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-green-400 transition">Contact</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button class="px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md text-sm font-medium hover:opacity-90 transition">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700 focus:outline-none">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="hidden md:hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-white hover:text-green-400">Home</a>
+                <a href="#features" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">Features</a>
+                <a href="#use-cases" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">Use Cases</a>
+                <a href="#pricing" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">Pricing</a>
+                <a href="#faqs" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">FAQs</a>
+                <a href="#about" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">About</a>
+                <a href="#contact" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-green-400">Contact</a>
+                <button class="w-full mt-2 px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md text-base font-medium hover:opacity-90 transition">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="pt-16">
+        <!-- Home Page -->
+        <section id="home" class="min-h-screen flex items-center page-transition" style="animation-delay: 0.1s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                            <span class="gradient-text">AI Agents</span> <br>
+                            For Your Business
+                        </h1>
+                        <p class="text-lg text-gray-300 mb-8">
+                            ATLASAI builds custom AI agents that automate workflows, enhance customer experiences, and drive growth for your business.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <button class="px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md font-medium hover:opacity-90 transition glow-hover">
+                                Get Started
+                            </button>
+                            <button class="px-6 py-3 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                                Learn More
+                            </button>
+                        </div>
+                        <div class="mt-12 flex items-center space-x-6">
+                            <div class="flex items-center">
+                                <div class="flex -space-x-2">
+                                    <img class="inline-block h-10 w-10 rounded-full ring-2 ring-dark-800" src="https://randomuser.me/api/portraits/women/12.jpg" alt="">
+                                    <img class="inline-block h-10 w-10 rounded-full ring-2 ring-dark-800" src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                                    <img class="inline-block h-10 w-10 rounded-full ring-2 ring-dark-800" src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+                                </div>
+                                <span class="ml-3 text-sm text-gray-400">Trusted by 500+ companies</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spline-container glow-box">
+                        <spline-viewer url="https://prod.spline.design/xBl1YILT653rvIP4/scene.splinecode"></spline-viewer>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="tech-marquee">
+  <div class="fade-left"></div>
+  <div class="fade-right"></div>
+
+  <div class="marquee">
+    <div class="marquee-content">
+      <img src="elevenlabs.svg" alt="ElevenLabs" />
+      <img src="claude.svg" alt="Claude" />
+      <img src="make.svg" alt="Make" />
+      <img src="openai.svg" alt="OpenAI" />
+      <img src="n8n.svg" alt="N8N" />
+
+      <!-- Repeat for smooth loop -->
+      <img src="elevenlabs.svg" alt="ElevenLabs" />
+      <img src="claude.svg" alt="Claude" />
+      <img src="make.svg" alt="Make" />
+      <img src="openai.svg" alt="OpenAI" />
+      <img src="n8n.svg" alt="N8N" />
+    </div>
+  </div>
+</div>
+
+        <!-- Features Page -->
+        <section id="features" class="py-20 page-transition" style="animation-delay: 0.2s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-green-400 font-semibold">POWERFUL FEATURES</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">What Our AI Agents Can Do</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Our AI agents are equipped with cutting-edge capabilities to transform your business operations.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-brain text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Natural Language Processing</h3>
+                        <p class="text-gray-400">Understand and respond to human language with context awareness and emotional intelligence.</p>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-robot text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Process Automation</h3>
+                        <p class="text-gray-400">Automate repetitive tasks and workflows with precision and efficiency.</p>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Data Analysis</h3>
+                        <p class="text-gray-400">Extract insights from complex datasets and provide actionable recommendations.</p>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-headset text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">24/7 Customer Support</h3>
+                        <p class="text-gray-400">Provide instant, accurate responses to customer inquiries at any time.</p>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-lock text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Security Monitoring</h3>
+                        <p class="text-gray-400">Detect and respond to security threats in real-time with advanced algorithms.</p>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-green-400">
+                            <i class="fas fa-sync-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Continuous Learning</h3>
+                        <p class="text-gray-400">Improve performance over time by learning from interactions and feedback.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases Page -->
+        <section id="use-cases" class="py-20 bg-dark-800 page-transition" style="animation-delay: 0.3s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-green-400 font-semibold">REAL-WORLD APPLICATIONS</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">Transform Your Business</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Discover how our AI agents are revolutionizing industries.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="flex items-start mb-6">
+                            <div class="w-16 h-16 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                <i class="fas fa-shopping-cart text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">E-commerce</h3>
+                                <p class="text-gray-400">Personalized shopping assistants, inventory management, and fraud detection.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="flex items-start mb-6">
+                            <div class="w-16 h-16 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                <i class="fas fa-heartbeat text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Healthcare</h3>
+                                <p class="text-gray-400">Patient monitoring, diagnostic assistance, and appointment scheduling.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="flex items-start mb-6">
+                            <div class="w-16 h-16 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                <i class="fas fa-university text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Finance</h3>
+                                <p class="text-gray-400">Fraud detection, risk assessment, and personalized financial advice.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <div class="flex items-start mb-6">
+                            <div class="w-16 h-16 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                <i class="fas fa-graduation-cap text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Education</h3>
+                                <p class="text-gray-400">Personalized learning assistants, automated grading, and student support.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <button class="px-6 py-3 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                        View All Use Cases
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Page -->
+        <section id="pricing" class="py-20 page-transition" style="animation-delay: 0.4s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-green-400 font-semibold">FLEXIBLE PRICING</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">Choose Your Plan</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Select the perfect plan for your business needs.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <h3 class="text-xl font-semibold mb-4">Starter</h3>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">$99</span>
+                            <span class="text-gray-400">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>1 AI Agent</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>1,000 API calls/month</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Basic Analytics</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Email Support</span>
+                            </li>
+                        </ul>
+                        <button class="w-full px-4 py-2 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                            Get Started
+                        </button>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border-2 border-green-400 glow-box relative">
+                        <div class="absolute top-0 right-0 bg-green-400 text-black text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+                            POPULAR
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Professional</h3>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">$499</span>
+                            <span class="text-gray-400">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>5 AI Agents</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>10,000 API calls/month</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Advanced Analytics</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Priority Support</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Custom Integrations</span>
+                            </li>
+                        </ul>
+                        <button class="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md font-medium hover:opacity-90 transition">
+                            Get Started
+                        </button>
+                    </div>
+                    
+                    <div class="bg-dark-800 p-8 rounded-xl border border-dark-700 hover:border-green-400 transition glow-hover">
+                        <h3 class="text-xl font-semibold mb-4">Enterprise</h3>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">Custom</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Unlimited AI Agents</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Unlimited API calls</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Premium Analytics</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>24/7 Dedicated Support</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>Custom Development</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                <span>On-premise Deployment</span>
+                            </li>
+                        </ul>
+                        <button class="w-full px-4 py-2 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                            Contact Sales
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-12 bg-dark-800 p-8 rounded-xl border border-dark-700">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Need something different?</h3>
+                    <p class="text-gray-400 text-center mb-6 max-w-2xl mx-auto">We offer custom solutions tailored to your specific business requirements.</p>
+                    <div class="text-center">
+                        <button class="px-6 py-3 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                            Request Custom Quote
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQs Page -->
+        <section id="faqs" class="py-20 bg-dark-800 page-transition" style="animation-delay: 0.5s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-green-400 font-semibold">HAVE QUESTIONS?</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">Frequently Asked Questions</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Find answers to common questions about our AI agents.</p>
+                </div>
+                
+                <div class="max-w-3xl mx-auto">
+                    <div class="space-y-4">
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">What exactly is an AI agent?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    An AI agent is a software program that can perform tasks autonomously, make decisions, and interact with users or other systems. Our AI agents are specialized for business applications, capable of handling complex workflows, customer interactions, data analysis, and more.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">How long does it take to implement an AI agent?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    Implementation time varies based on complexity. For standard solutions, deployment can take 2-4 weeks. Custom solutions may require 6-12 weeks. We provide a detailed timeline after assessing your specific requirements.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">What kind of training data do you need?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    The data requirements depend on your use case. We can work with existing business documents, customer interaction logs, product databases, or any other relevant data. For some applications, our pre-trained models may require minimal additional training.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">How do you ensure data privacy and security?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    We implement enterprise-grade security measures including encryption, access controls, and regular audits. For sensitive data, we offer on-premise deployment options. We comply with GDPR, CCPA, and other relevant regulations.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">Can the AI agent integrate with our existing systems?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    Yes, our AI agents can integrate with most business systems including CRMs, ERPs, databases, and APIs. We provide standard connectors for popular platforms and can develop custom integrations as needed.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-6 rounded-xl border border-dark-700">
+                            <button class="faq-toggle w-full flex justify-between items-center text-left">
+                                <h3 class="text-lg font-medium">What kind of support do you offer?</h3>
+                                <i class="fas fa-chevron-down text-green-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content mt-4 hidden">
+                                <p class="text-gray-400">
+                                    We offer tiered support options from email support to 24/7 dedicated assistance. All plans include documentation, knowledge base access, and community forums. Higher tiers include phone support, SLAs, and dedicated account managers.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 text-center">
+                        <p class="text-gray-400 mb-4">Still have questions?</p>
+                        <button class="px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md font-medium hover:opacity-90 transition">
+                            Contact Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="py-20 page-transition" style="animation-delay: 0.6s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-green-400 font-semibold">OUR STORY</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6">Building the Future of AI</h2>
+                        <p class="text-gray-400 mb-6">
+                            Founded in 2020, ATLASAI emerged from a simple idea: AI should be accessible, practical, and transformative for businesses of all sizes. Our team of AI researchers, engineers, and business experts came together to bridge the gap between cutting-edge AI and real-world business applications.
+                        </p>
+                        <p class="text-gray-400 mb-8">
+                            Today, we serve hundreds of clients across industries, helping them automate processes, enhance customer experiences, and unlock new opportunities through intelligent automation.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <div class="text-3xl font-bold mb-2 gradient-text">500+</div>
+                                <div class="text-gray-400">Clients Worldwide</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold mb-2 gradient-text">40+</div>
+                                <div class="text-gray-400">Team Members</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold mb-2 gradient-text">15</div>
+                                <div class="text-gray-400">Countries Served</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold mb-2 gradient-text">24/7</div>
+                                <div class="text-gray-400">Support Available</div>
+                            </div>
+                        </div>
+                        
+                        <button class="px-6 py-3 border border-dark-700 text-white rounded-md font-medium hover:border-green-400 transition">
+                            Meet Our Team
+                        </button>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="bg-dark-800 p-8 rounded-xl border border-dark-700">
+                            <h3 class="text-xl font-semibold mb-6">Our Values</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-lightbulb text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-2">Innovation</h4>
+                                        <p class="text-gray-400">We push boundaries to develop AI solutions that redefine what's possible.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-shield-alt text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-2">Integrity</h4>
+                                        <p class="text-gray-400">We prioritize ethical AI development and transparent business practices.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-hands-helping text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-2">Collaboration</h4>
+                                        <p class="text-gray-400">We work closely with clients to understand their unique challenges.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-rocket text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-2">Impact</h4>
+                                        <p class="text-gray-400">We measure success by the tangible value we create for our clients.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Page -->
+        <section id="contact" class="py-20 bg-dark-800 page-transition" style="animation-delay: 0.7s;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-green-400 font-semibold">GET IN TOUCH</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">Contact Our Team</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Have questions or ready to get started? Reach out to us.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <form class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="Your name">
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                                <input type="email" id="email" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="your@email.com">
+                            </div>
+                            
+                            <div>
+                                <label for="company" class="block text-sm font-medium text-gray-300 mb-1">Company (Optional)</label>
+                                <input type="text" id="company" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="Your company">
+                            </div>
+                            
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-gray-300 mb-1">Subject</label>
+                                <select id="subject" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent">
+                                    <option value="">Select a subject</option>
+                                    <option value="sales">Sales Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
+                                <textarea id="message" rows="5" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="Your message"></textarea>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-md font-medium hover:opacity-90 transition">
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 mb-8">
+                            <h3 class="text-xl font-semibold mb-6">Contact Information</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1">Headquarters</h4>
+                                        <p class="text-gray-400">123 AI Boulevard, San Francisco, CA 94107</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1">Email Us</h4>
+                                        <p class="text-gray-400">hello@atlasai.com</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-phone-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1">Call Us</h4>
+                                        <p class="text-gray-400">+1 (555) 123-4567</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-6 text-green-400">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium mb-1">Business Hours</h4>
+                                        <p class="text-gray-400">Monday - Friday: 9:00 AM - 6:00 PM PST</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark-900 p-8 rounded-xl border border-dark-700">
+                            <h3 class="text-xl font-semibold mb-6">Follow Us</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 bg-dark-700 rounded-full flex items-center justify-center text-gray-300 hover:text-green-400 transition">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-dark-700 rounded-full flex items-center justify-center text-gray-300 hover:text-green-400 transition">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-dark-700 rounded-full flex items-center justify-center text-gray-300 hover:text-green-400 transition">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-dark-700 rounded-full flex items-center justify-center text-gray-300 hover:text-green-400 transition">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-900 border-t border-dark-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <span class="text-2xl font-bold gradient-text">ATLASAI</span>
+                    <p class="mt-4 text-gray-400">
+                        Building intelligent agents for the businesses of tomorrow.
+                    </p>
+                    <div class="mt-6 flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-green-400 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-green-400 transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-green-400 transition">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Product</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-gray-400 hover:text-green-400 transition">Features</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-green-400 transition">Pricing</a></li>
+                        <li><a href="#use-cases" class="text-gray-400 hover:text-green-400 transition">Use Cases</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">Integrations</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Resources</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">API Reference</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">Blog</a></li>
+                        <li><a href="#faqs" class="text-gray-400 hover:text-green-400 transition">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#about" class="text-gray-400 hover:text-green-400 transition">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-green-400 transition">Press</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-green-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-dark-700 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2023 ATLASAI. All rights reserved.
+                </p>
+                <div class="mt-4 md:mt-0 flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-green-400 text-sm transition">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-green-400 text-sm transition">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-green-400 text-sm transition">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                // Toggle content
+                content.classList.toggle('hidden');
+                
+                // Rotate icon
+                if (content.classList.contains('hidden')) {
+                    icon.classList.remove('transform', 'rotate-180');
+                } else {
+                    icon.classList.add('transform', 'rotate-180');
+                }
+            });
+        });
+        
+        // Page transition observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.page-transition').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Highlight current nav link
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        function highlightNavLink() {
+            const scrollPosition = window.scrollY + 100;
+            
+            navLinks.forEach(link => {
+                const sectionId = link.getAttribute('href');
+                const section = document.querySelector(sectionId);
+                
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        link.classList.add('text-white', 'bg-dark-700');
+                        link.classList.remove('text-gray-300');
+                    } else {
+                        link.classList.remove('text-white', 'bg-dark-700');
+                        link.classList.add('text-gray-300');
+                    }
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', highlightNavLink);
+        window.addEventListener('load', highlightNavLink);
+    </script>
+</body>
+</html>
