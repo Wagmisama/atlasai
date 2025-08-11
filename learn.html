@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Solutions | AtlasAi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    dark: {
+                        900: '#0a0a0a',
+                        800: '#1a1a1a',
+                        700: '#2a2a2a',
+                        600: '#333333',
+                    },
+                    orange: {
+                        glow: 'rgba(255, 107, 0, 0.1)'
+                    }
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'pulse-slow': 'pulse 6s infinite',
+                    'neon-glow': 'neon-glow 2s ease-in-out infinite alternate',
+                    'data-pulse': 'data-pulse 8s linear infinite',
+                    'scanline': 'scanline 16s linear infinite',
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                    'neon-glow': {
+                        '0%': { 'text-shadow': '0 0 5px #FF6B00, 0 0 10px #FF6B00' },
+                        '100%': { 'text-shadow': '0 0 10px #FF6B00, 0 0 20px #FF6B00, 0 0 30px #FF8C00' }
+                    },
+                    'data-pulse': {
+                        '0%': { opacity: '0.03' },
+                        '50%': { opacity: '0.1' },
+                        '100%': { opacity: '0.03' }
+                    },
+                    'scanline': {
+                        '0%': { transform: 'translateY(-100%)' },
+                        '100%': { transform: 'translateY(100%)' }
+                    }
+                },
+                backgroundImage: {
+                    'tech-pattern': "radial-gradient(circle at center, rgba(17, 17, 17, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%), repeating-radial-gradient(circle at center, rgba(255,255,255,0.05) 0 1px, transparent 1px 20px)",
+                    'circuit-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==')",
+                    'hex-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNNTAgMEwxMDAgMjVMMTAwIDc1TDUwIDEwMEwwIDc1TDAgMjVMNTAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')"
+                }
+            }
+        }
+    }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 0, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 70% 60%, rgba(255, 140, 0, 0.08) 0%, transparent 25%),
+                repeating-radial-gradient(circle at center, rgba(255,255,255,0.03) 0 1px, transparent 1px 20px);
+            z-index: -2;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNNTAgMEwxMDAgMjVMMTAwIDc1TDUwIDEwMEwwIDc1TDAgMjVMNTAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+');
+            background-size: 100px 100px;
+            opacity: 0.05;
+            z-index: -1;
+            animation: data-pulse 8s linear infinite;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 8px rgba(255, 107, 0, 0.4);
+        }
+        
+        .glow-box {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+        }
+        
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .section-bg {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            border-color: #FF6B00;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+        
+        .futuristic-heading {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .neon-text {
+            animation: neon-glow 2s ease-in-out infinite alternate;
+        }
+        
+        #ai-model-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            margin: 0;
+            z-index: 0;
+        }
+        
+        .circuit-bg {
+            background-image: 
+                radial-gradient(circle at center, rgba(17, 17, 17, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%),
+                url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==');
+        }
+        
+        .holographic-card {
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .holographic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 107, 0, 0) 0%,
+                rgba(255, 107, 0, 0) 30%,
+                rgba(255, 107, 0, 0.05) 45%,
+                rgba(255, 107, 0, 0) 60%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-30%, -30%); }
+            100% { transform: rotate(30deg) translate(30%, 30%); }
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255, 107, 0, 0.05) 50%,
+                transparent 100%
+            );
+            animation: scanline 16s linear infinite;
+            pointer-events: none;
+        }
+        
+        .ai-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 107, 0, 0.05);
+            border: 1px solid rgba(255, 107, 0, 0.1);
+        }
+        
+        .counter {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .voice-active {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-active:hover {
+            background: rgba(255, 107, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+        }
+        
+        .voice-active.listening {
+            animation: pulse-slow 1.5s infinite;
+            background: rgba(255, 107, 0, 0.4);
+        }
+        
+        .voice-hint {
+            position: fixed;
+            bottom: 5.5rem;
+            right: 2rem;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .voice-active:hover .voice-hint {
+            opacity: 1;
+        }
+        
+        .laser-beam {
+            position: fixed;
+            top: 0;
+            right: 20%;
+            width: 2px;
+            height: 0;
+            background: linear-gradient(to bottom, transparent, #FF6B00, transparent);
+            box-shadow: 0 0 10px #FF6B00;
+            z-index: -1;
+            transition: height 0.5s ease;
+        }
+        
+        .highlight-solution {
+            animation: highlight-pulse 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes highlight-pulse {
+            0% {
+                box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        .data-stream {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .data-node {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 107, 0, 0.6);
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        /* New spark animation styles */
+        .spark-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 107, 0, 0.8);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: spark-float 4s ease-in-out infinite;
+        }
+
+        @keyframes spark-float {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(10px, -10px);
+                opacity: 1;
+            }
+        }
+
+        .energy-core {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,107,0,0.5) 0%, rgba(255,107,0,0) 70%);
+            filter: blur(10px);
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+        }
+        @media (max-width: 768px) {
+    footer {
+        display: none !important;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="fixed w-full bg-dark-900 bg-opacity-80 backdrop-blur-md z-50 border-b border-orange-400/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo (also links to home) -->
+            <div class="flex items-center">
+                <a href="index.html" class="flex-shrink-0">
+                    <span class="text-2xl font-bold gradient-text futuristic-heading neon-flicker">All-AtlasAi</span>
+                </a>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:block">
+                <a href="index.html" class="px-4 py-2 btn-outline text-white rounded-md text-sm font-medium hover:border-orange-400 transition">
+                    ← Back to Home
+                </a>
+            </div>
+            
+            <!-- Mobile menu button -->
+            <div class="md:hidden flex items-center">
+                <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-orange-400 hover:text-white hover:bg-orange-400/10 focus:outline-none transition" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                    <span class="sr-only">Open main menu</span>
+                    <!-- Hamburger icon -->
+                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <!-- Close icon (hidden by default) -->
+                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile menu (hidden by default) -->
+    <div class="md:hidden hidden" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-orange-400/10 border border-orange-400/20 w-full text-center">
+                ← Back to Home
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Toggle mobile menu
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', function() {
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !expanded);
+        mobileMenu.classList.toggle('hidden');
+        
+        // Toggle hamburger/close icons
+        const hamburgerIcon = this.querySelector('svg:first-child');
+        const closeIcon = this.querySelector('svg:last-child');
+        hamburgerIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+    });
+</script>
+
+    <!-- Laser Beam Effect -->
+    <div class="laser-beam" id="laser-beam"></div>
+
+    <!-- Main Content -->
+    <div class="pt-20 pb-16">
+        <!-- Hero Section -->
+        <section class="py-20 bg-dark-800 circuit-bg relative overflow-hidden">
+            <div class="scanline"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 futuristic-heading">
+                    <span class="gradient-text neon-text">AI Agent Solutions</span>
+                </h1>
+                <p class="max-w-3xl mx-auto text-xl text-gray-400 mb-8">
+                    Next-generation automation powered by intelligent agents
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#solutions" class="px-6 py-3 btn-primary text-white rounded-md font-medium hover:opacity-90 transition">
+                        Explore Solutions
+                    </a>
+                    <a href="#contact" class="px-6 py-3 btn-outline text-white rounded-md font-medium hover:border-orange-400 transition">
+                        Contact Sales
+                    </a>
+                </div>
+                
+                <!-- AI Stats Counter -->
+                <div class="ai-stats">
+                    <div class="stat">
+                        <div class="counter" id="agent-counter">0</div>
+                        <span class="text-gray-400">+ Executions</span>
+                    </div>
+                    <div class="stat">
+                        <div class="counter" id="client-counter">0</div>
+                        <span class="text-gray-400">Global Clients</span>
+                    </div>
+                </div>
+            </div>
+            
+          
+        </section>
+
+        <!-- AI Revolution Section -->
+        <section class="py-12 section-bg relative"> <!-- Reduced padding from py-20 to py-12 -->
+            <div class="scanline"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-orange-400 font-semibold">THE FUTURE OF WORK</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6 futuristic-heading">The AI Agent Revolution</h2>
+                        <p class="text-gray-400 mb-6">
+                            In the era of digital transformation, AI agents represent the next evolutionary leap in business automation. These intelligent systems go beyond simple chatbots - they're autonomous, learning entities capable of handling complex workflows, making data-driven decisions, and interacting with both digital systems and humans.
+                        </p>
+                        <p class="text-gray-400 mb-6">
+                            Our AI agents combine cutting-edge language models with proprietary reasoning frameworks to deliver human-like understanding with machine efficiency. They learn from every interaction, adapt to your business processes, and continuously improve their performance.
+                        </p>
+                        <p class="text-gray-400">
+                            Unlike traditional automation, our agents understand context, handle ambiguity, and can chain together multiple tasks to complete sophisticated business processes end-to-end. The result? A workforce that never sleeps, never makes errors from fatigue, and scales instantly to meet demand.
+                        </p>
+                    </div>
+                    <div class="holographic-card p-8 rounded-xl">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-4 text-orange-400">
+                                <i class="fas fa-brain text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold">Key Advantages</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 text-orange-400 mt-1 mr-3">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <span class="text-gray-400">24/7 operation with instant response times</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 text-orange-400 mt-1 mr-3">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span class="text-gray-400">Continuous learning and improvement</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 text-orange-400 mt-1 mr-3">
+                                    <i class="fas fa-expand"></i>
+                                </div>
+                                <span class="text-gray-400">Instant scalability to handle peak loads</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 text-orange-400 mt-1 mr-3">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <span class="text-gray-400">Enterprise-grade security and compliance</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 text-orange-400 mt-1 mr-3">
+                                    <i class="fas fa-random"></i>
+                                </div>
+                                <span class="text-gray-400">Seamless integration with existing systems</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solutions Grid -->
+        <section id="solutions" class="py-20 section-bg relative">
+            <div class="scanline"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-16">
+                    <span class="text-orange-400 font-semibold">ENTERPRISE AUTOMATION</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4 futuristic-heading">AI Agent Solutions</h2>
+                    <p class="max-w-2xl mx-auto text-gray-400">Specialized automation for every business function</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Client Support Automation -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Client Support Automation">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-headset text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Client Support Automation</h3>
+                        <p class="text-gray-400">AI chat, email, and voice bots that handle customer support 24/7 with human-like interactions.</p>
+                    </div>
+                    
+                    <!-- CRM & Lead Qualification -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="CRM & Lead Qualification">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-filter text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">CRM & Lead Qualification</h3>
+                        <p class="text-gray-400">Automatically score and route leads to sales teams with HubSpot/Salesforce sync.</p>
+                    </div>
+                    
+                    <!-- AI Sales Agents -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="AI Sales Agents">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-handshake text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">AI Sales Agents</h3>
+                        <p class="text-gray-400">Bots that follow up with leads, generate quotes, and assist in closing deals.</p>
+                    </div>
+                    
+                    <!-- Voice AI for Call Centers -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Voice AI for Call Centers">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-phone-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Voice AI for Call Centers</h3>
+                        <p class="text-gray-400">Natural-sounding AI agents that handle inbound/outbound calls at scale.</p>
+                    </div>
+                    
+                    <!-- AI Admin Assistants -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="AI Admin Assistants">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-calendar-check text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">AI Admin Assistants</h3>
+                        <p class="text-gray-400">Automate scheduling, calendar management, and executive support tasks.</p>
+                    </div>
+                    
+                    <!-- Internal Knowledge Bots -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Internal Knowledge Bots">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-database text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Internal Knowledge Bots</h3>
+                        <p class="text-gray-400">Chatbots trained on your company docs that answer employee queries instantly.</p>
+                    </div>
+                    
+                    <!-- Document & Form Automation -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Document & Form Automation">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-file-invoice text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Document & Form Automation</h3>
+                        <p class="text-gray-400">Extract and structure data from invoices, contracts, and PDFs automatically.</p>
+                    </div>
+                    
+                    <!-- AI Research Agents -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="AI Research Agents">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-search-plus text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">AI Research Agents</h3>
+                        <p class="text-gray-400">RAG-powered agents that combine web + internal data for accurate reports.</p>
+                    </div>
+                    
+                    <!-- Google Maps Data Scraping -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Google Maps Data Scraping">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-map-marked-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Google Maps Data Scraping</h3>
+                        <p class="text-gray-400">Extract business contacts, reviews, and locations for lead generation.</p>
+                    </div>
+                    
+                    <!-- Social Media Automation -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Social Media Automation">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-share-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Social Media Automation</h3>
+                        <p class="text-gray-400">Schedule posts, analyze engagement, and auto-respond to DMs across platforms.</p>
+                    </div>
+                    
+                    <!-- E-commerce Optimization -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="E-commerce Optimization">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-shopping-cart text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">E-commerce Optimization</h3>
+                        <p class="text-gray-400">AI that handles product recommendations, reviews, and retention campaigns.</p>
+                    </div>
+                    
+                    <!-- Email Outreach Automation -->
+                    <div class="holographic-card p-8 rounded-xl border border-dark-700 hover:border-orange-400 transition glow-hover" id="Email Outreach Automation">
+                        <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mb-6 text-orange-400">
+                            <i class="fas fa-envelope-open-text text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Email Outreach Automation</h3>
+                        <p class="text-gray-400">Agents that write, personalize, and send targeted email sequences at scale.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="contact" class="py-20 bg-dark-800 circuit-bg relative">
+            <div class="scanline"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 futuristic-heading">Ready to Automate Your Business?</h2>
+                <p class="max-w-2xl mx-auto text-gray-400 mb-8">
+                    Our AI specialists will design custom solutions for your specific needs.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="index.html#contact" class="px-6 py-3 btn-primary text-white rounded-md font-medium hover:opacity-90 transition">
+                        Contact Our Team
+                    </a>
+                    <a href="index.html#pricing" class="px-6 py-3 btn-outline text-white rounded-md font-medium hover:border-orange-400 transition">
+                        View Pricing
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-dark-900 border-t border-dark-700 relative overflow-hidden">
+        <!-- Circuit pattern overlay -->
+        <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==');"></div>
+        
+        <!-- Glow elements -->
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500 rounded-full filter blur-[80px] opacity-10"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[80px] opacity-10"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-12">
+                <!-- Logo and description -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl font-bold gradient-text futuristic-heading neon-flicker">All-AtlasAi</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        Building the next generation of intelligent agents to transform your business operations.
+                    </p>
+                    
+                    <!-- Technology Stack -->
+    <div class="mb-4">
+        <h4 class="text-sm font-semibold text-blue-400 mb-2">AI TECHNOLOGIES</h4>
+        <div class="flex flex-wrap gap-2">
+            <span class="tech-badge">LLMs -</span>
+            <span class="tech-badge">RAG -</span>
+            <span class="tech-badge">Computer Vision -</span>
+            <span class="tech-badge">NLP.</span>
+        </div>
+    </div>
+            </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-sm font-semibold text-orange-400 tracking-wider uppercase mb-4">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-orange-400/60"></i> Home
+                        </a></li>
+                        <li><a href="roadmap.html" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-orange-400/60"></i> Roadmap
+                        </a></li>
+                        <li><a href="faq.html" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-orange-400/60"></i> FAQs
+                        </a></li>
+                        <li><a href="blog.html" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+            <i class="fas fa-chevron-right text-xs mr-2 text-orange-400/60"></i> Blog
+        </a></li>
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Products -->
+                <div>
+                    <h3 class="text-sm font-semibold text-purple-400 tracking-wider uppercase mb-4">Products</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-purple-400/60"></i> AI Agents
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-purple-400/60"></i> Automation
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-purple-400/60"></i> Analytics
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-purple-400/60"></i> Integrations
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-orange-400 transition flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-purple-400/60"></i> API
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-sm font-semibold text-blue-400 tracking-wider uppercase mb-4">Contact</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-blue-400 mt-1 mr-3"></i>
+                            <span class="text-gray-400">Worldwide<br></span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-blue-400 mr-3"></i>
+                            <a href="mailto:hello@atlasai.com" class="text-gray-400 hover:text-orange-400 transition">contact@allatlasai.com</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt text-blue-400 mr-3"></i>
+                            <a href="tel:+15551234567" class="text-gray-400 hover:text-orange-400 transition">+212 698-905764</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock text-blue-400 mr-3"></i>
+                            <span class="text-gray-400">24/7</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div class="border-t border-dark-700 my-8"></div>
+            
+            <!-- Bottom row -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Copyright -->
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-500 text-sm">
+                        &copy; 2025 All-AtlasAi Technologies. All rights reserved.
+                    </p>
+                </div>
+                
+                <!-- Legal links -->
+                <div class="flex flex-wrap justify-center space-x-4 md:space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-orange-400 text-sm transition">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-orange-400 text-sm transition">Terms of Service</a>
+                    <a href="#" class="text-gray-500 hover:text-orange-400 text-sm transition">Cookie Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-orange-400 text-sm transition">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Three.js scene
+        let scene, camera, renderer, sparkParticles;
+        let isListening = false;
+        const voiceCommands = {
+            "show me support": () => highlightSolution("Client Support Automation"),
+            "show me sales": () => highlightSolution("AI Sales Agents"),
+            "show me voice": () => highlightSolution("Voice AI for Call Centers"),
+            "show me research": () => highlightSolution("AI Research Agents")
+        };
+
+        function init3DModel() {
+            const container = document.getElementById('ai-model-container');
+            if (!container) return;
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xff6b00, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            const pointLight = new THREE.PointLight(0xff8c00, 2, 10);
+            pointLight.position.set(0, 0, 5);
+            scene.add(pointLight);
+            
+            // Create spark particles
+            const particlesCount = 1000;
+            const positions = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount; i++) {
+                // positions
+                positions[i * 3] = (Math.random() - 0.5) * 10;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+                
+                // colors
+                colors[i * 3] = 1; // R
+                colors[i * 3 + 1] = 0.4 + Math.random() * 0.2; // G
+                colors[i * 3 + 2] = 0; // B
+            }
+            
+            const particlesGeometry = new THREE.BufferGeometry();
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+            
+            sparkParticles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(sparkParticles);
+            
+            // Create central energy sphere
+            const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const sphereMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff6b00,
+                transparent: true,
+                opacity: 0.3
+            });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            scene.add(sphere);
+            
+            // Create data streams
+            createDataStreams();
+            
+            // Camera position
+            camera.position.z = 5;
+            
+            // Add controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false;
+            controls.enablePan = false;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+            
+            // Make model interactive
+            container.addEventListener('mouseenter', () => {
+                gsap.to(sparkParticles.material, {
+                    size: 0.1,
+                    duration: 0.5
+                });
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                gsap.to(sparkParticles.material, {
+                    size: 0.05,
+                    duration: 0.5
+                });
+            });
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Animate particles
+                const positions = sparkParticles.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    // Add some random movement
+                    positions[i] += (Math.random() - 0.5) * 0.02;
+                    positions[i + 1] += (Math.random() - 0.5) * 0.02;
+                    positions[i + 2] += (Math.random() - 0.5) * 0.02;
+                    
+                    // Constrain particles to a volume
+                    if (Math.abs(positions[i]) > 5) positions[i] *= -0.99;
+                    if (Math.abs(positions[i + 1]) > 5) positions[i + 1] *= -0.99;
+                    if (Math.abs(positions[i + 2]) > 5) positions[i + 2] *= -0.99;
+                }
+                sparkParticles.geometry.attributes.position.needsUpdate = true;
+                
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+        
+        function createDataStreams() {
+            const dataStream = document.getElementById('data-stream');
+            if (!dataStream) return;
+            
+            // Clear existing nodes
+            dataStream.innerHTML = '';
+            
+            // Create flowing data nodes
+            for (let i = 0; i < 50; i++) {
+                const node = document.createElement('div');
+                node.className = 'data-node';
+                node.style.left = `${Math.random() * 100}%`;
+                node.style.top = `${Math.random() * 100}%`;
+                node.style.animation = `float ${4 + Math.random() * 6}s ease-in-out infinite`;
+                node.style.animationDelay = `${Math.random() * 5}s`;
+                dataStream.appendChild(node);
+            }
+        }
+        
+        function initCounters() {
+            const agentCounter = document.getElementById('agent-counter');
+            const clientCounter = document.getElementById('client-counter');
+            
+            if (agentCounter && clientCounter) {
+                animateValue(agentCounter, 0, 25000, 3000);  // Changed to 25,000 executions
+                animateValue(clientCounter, 0, 52, 3000);    // Changed to 52 clients
+            }
+        }
+        
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.innerHTML = value.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        function initLaserBeam() {
+            const laserBeam = document.getElementById('laser-beam');
+            if (!laserBeam) return;
+            
+            let lastScroll = 0;
+            let beamHeight = 0;
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Only animate if scrolling down
+                if (scrollTop > lastScroll) {
+                    beamHeight = Math.min(beamHeight + 5, 100);
+                } else {
+                    beamHeight = Math.max(beamHeight - 5, 0);
+                }
+                
+                laserBeam.style.height = `${beamHeight}vh`;
+                lastScroll = scrollTop;
+            });
+        }
+        
+        function initVoiceControl() {
+            const voiceControl = document.getElementById('voice-control');
+            if (!voiceControl || !('webkitSpeechRecognition' in window)) {
+                return;
+            }
+            
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            voiceControl.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                    voiceControl.classList.remove('listening');
+                    isListening = false;
+                } else {
+                    recognition.start();
+                    voiceControl.classList.add('listening');
+                    isListening = true;
+                }
+            });
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                let commandMatched = false;
+                
+                for (const [command, action] of Object.entries(voiceCommands)) {
+                    if (transcript.includes(command)) {
+                        action();
+                        commandMatched = true;
+                        break;
+                    }
+                }
+                
+                if (!commandMatched) {
+                    // Play error sound
+                    playSound(200, 0.1);
+                }
+                
+                voiceControl.classList.remove('listening');
+                isListening = false;
+            };
+            
+            recognition.onerror = () => {
+                voiceControl.classList.remove('listening');
+                isListening = false;
+            };
+        }
+        
+        function highlightSolution(solutionId) {
+            // Play confirmation sound
+            playSound(600, 0.1);
+            
+            const solutionElement = document.getElementById(solutionId);
+            if (!solutionElement) return;
+            
+            // Remove highlight from all solutions
+            document.querySelectorAll('.holographic-card').forEach(card => {
+                card.classList.remove('highlight-solution');
+            });
+            
+            // Add highlight to selected solution
+            solutionElement.classList.add('highlight-solution');
+            
+            // Scroll to solution
+            solutionElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Remove highlight after 5 seconds
+            setTimeout(() => {
+                solutionElement.classList.remove('highlight-solution');
+            }, 5000);
+        }
+        
+        function playSound(frequency, duration) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = frequency;
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log('Audio error:', e);
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            init3DModel();
+            initCounters();
+            initLaserBeam();
+            initVoiceControl();
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Make solution cards interactive with 3D model
+            document.querySelectorAll('.holographic-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    if (sparkParticles && sparkParticles.material) {
+                        gsap.to(sparkParticles.material, {
+                            size: 0.1,
+                            duration: 0.5
+                        });
+                    }
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    if (sparkParticles && sparkParticles.material) {
+                        gsap.to(sparkParticles.material, {
+                            size: 0.05,
+                            duration: 0.5
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Throttle animations when tab is inactive
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Tab is inactive - reduce animation intensity
+                if (sparkParticles && sparkParticles.material) {
+                    sparkParticles.material.size = 0.02;
+                }
+            } else {
+                // Tab is active - restore animations
+                if (sparkParticles && sparkParticles.material) {
+                    sparkParticles.material.size = 0.05;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

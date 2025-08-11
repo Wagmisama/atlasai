@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtlasAi - How NovaTech Solutions Increased Efficiency by 200%</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    dark: {
+                        900: '#0a0a0a',
+                        800: '#1a1a1a',
+                        700: '#2a2a2a',
+                        600: '#333333',
+                    },
+                    orange: {
+                        glow: 'rgba(255, 107, 0, 0.1)'
+                    },
+                    neon: {
+                        pink: '#ff00ff',
+                        blue: '#00f0ff',
+                        purple: '#9d00ff'
+                    }
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'pulse-slow': 'pulse 6s infinite',
+                    'neon-glow': 'neon-glow 2s ease-in-out infinite alternate',
+                    'data-pulse': 'data-pulse 8s linear infinite',
+                    'scanline': 'scanline 16s linear infinite',
+                    'grid-pulse': 'grid-pulse 15s ease-in-out infinite alternate',
+                    'circuit-fade': 'circuit-fade 12s linear infinite',
+                    'hologram-flicker': 'hologram-flicker 3s ease-in-out infinite',
+                    'neon-flicker': 'neon-flicker 5s ease-in-out infinite',
+                    'particle-float': 'particle-float 20s linear infinite'
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                    'neon-glow': {
+                        '0%': { 
+                            'text-shadow': '0 0 5px #FF6B00, 0 0 10px #FF6B00',
+                            'box-shadow': '0 0 5px rgba(255, 107, 0, 0.5), 0 0 10px rgba(255, 107, 0, 0.3)'
+                        },
+                        '100%': { 
+                            'text-shadow': '0 0 10px #FF6B00, 0 0 20px #FF6B00, 0 0 30px #FF8C00',
+                            'box-shadow': '0 0 10px rgba(255, 107, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.5)'
+                        }
+                    },
+                    'data-pulse': {
+                        '0%': { opacity: '0.03' },
+                        '50%': { opacity: '0.1' },
+                        '100%': { opacity: '0.03' }
+                    },
+                    'scanline': {
+                        '0%': { transform: 'translateY(-100%)' },
+                        '100%': { transform: 'translateY(100%)' }
+                    },
+                    'grid-pulse': {
+                        '0%, 100%': { opacity: '0.05' },
+                        '50%': { opacity: '0.15' }
+                    },
+                    'circuit-fade': {
+                        '0%, 100%': { opacity: '0.1' },
+                        '50%': { opacity: '0.4' }
+                    },
+                    'hologram-flicker': {
+                        '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '0.8' },
+                        '20%, 22%, 24%, 55%': { opacity: '0.2' }
+                    },
+                    'neon-flicker': {
+                        '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { 
+                            'text-shadow': '0 0 10px #FF6B00, 0 0 20px #FF6B00',
+                            'box-shadow': '0 0 10px rgba(255, 107, 0, 0.8)'
+                        },
+                        '20%, 22%, 24%, 55%': { 
+                            'text-shadow': '0 0 2px #FF6B00',
+                            'box-shadow': '0 0 2px rgba(255, 107, 0, 0.3)'
+                        }
+                    },
+                    'particle-float': {
+                        '0%': { transform: 'translateY(0) translateX(0)' },
+                        '25%': { transform: 'translateY(-25vh) translateX(10vw)' },
+                        '50%': { transform: 'translateY(-50vh) translateX(0)' },
+                        '75%': { transform: 'translateY(-25vh) translateX(-10vw)' },
+                        '100%': { transform: 'translateY(0) translateX(0)' }
+                    }
+                },
+                backgroundImage: {
+                    'tech-pattern': "radial-gradient(circle at center, rgba(17, 17, 17, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%), repeating-radial-gradient(circle at center, rgba(255,255,255,0.05) 0 1px, transparent 1px 20px)",
+                    'circuit-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==')",
+                    'hex-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNNTAgMEwxMDAgMjVMMTAwIDc1TDUwIDEwMEwwIDc1TDAgMjVMNTAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')",
+                    'grid-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNIDAgMCBMIDEwMCAwIEwgMTAwIDEwMCBMIDAgMTAwIEwgMCAwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDEwNywwLDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDAgMCBMIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMTA3LDAsMC4wMykiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')"
+                }
+            }
+        }
+    }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        /* Cyberpunk Grid Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNIDAgMCBMIDEwMCAwIEwgMTAwIDEwMCBMIDAgMTAwIEwgMCAwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDEwNywwLDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDAgMCBMIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMTA3LDAsMC4wMykiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+'),
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 0, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 70% 60%, rgba(255, 140, 0, 0.08) 0%, transparent 25%),
+                repeating-radial-gradient(circle at center, rgba(255,255,255,0.03) 0 1px, transparent 1px 20px);
+            background-size: 100px 100px, auto, auto, auto;
+            z-index: -2;
+            opacity: 0.1;
+            animation: grid-pulse 15s ease-in-out infinite alternate;
+        }
+        
+        /* Circuit Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==');
+            background-size: 200px 200px;
+            opacity: 0.05;
+            z-index: -1;
+            animation: circuit-fade 12s linear infinite;
+        }
+        
+        /* Cyberpunk Glow Effects */
+        .glow-text {
+            text-shadow: 0 0 8px rgba(255, 107, 0, 0.4);
+        }
+        
+        .glow-box {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+        }
+        
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+        }
+        
+        .neon-glow {
+            animation: neon-glow 2s ease-in-out infinite alternate;
+        }
+        
+        .neon-flicker {
+            animation: neon-flicker 5s ease-in-out infinite;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .futuristic-heading {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .section-bg {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            border-color: #FF6B00;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+        
+        .circuit-bg {
+            background-image: 
+                radial-gradient(circle at center, rgba(17, 17, 17, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%),
+                url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjAtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==');
+        }
+        
+        /* Cyberpunk Holographic Card */
+        .holographic-card {
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: hologram-flicker 3s ease-in-out infinite;
+        }
+        
+        .holographic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 107, 0, 0) 0%,
+                rgba(255, 107, 0, 0) 30%,
+                rgba(255, 107, 0, 0.05) 45%,
+                rgba(255, 107, 0, 0) 60%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-30%, -30%); }
+            100% { transform: rotate(30deg) translate(30%, 30%); }
+        }
+        
+        /* Cyberpunk Scanline Effect */
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255, 107, 0, 0.05) 50%,
+                transparent 100%
+            );
+            animation: scanline 16s linear infinite;
+            pointer-events: none;
+        }
+        
+        /* Cyberpunk Data Particles */
+        .data-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .data-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 107, 0, 0.6);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: particle-float 20s linear infinite;
+        }
+        
+        /* Cyberpunk Laser Grid */
+        .laser-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .laser-line {
+            position: absolute;
+            background: linear-gradient(to right, transparent, rgba(255, 107, 0, 0.3), transparent);
+            height: 1px;
+            width: 100%;
+            animation: scanline 20s linear infinite;
+        }
+        
+        .laser-line:nth-child(1) { top: 20%; animation-delay: 0s; }
+        .laser-line:nth-child(2) { top: 40%; animation-delay: -5s; }
+        .laser-line:nth-child(3) { top: 60%; animation-delay: -10s; }
+        .laser-line:nth-child(4) { top: 80%; animation-delay: -15s; }
+        
+        /* Cyberpunk UI Elements */
+        .ai-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 107, 0, 0.05);
+            border: 1px solid rgba(255, 107, 0, 0.1);
+        }
+        
+        .counter {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Cyberpunk Voice Control */
+        .voice-active {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+        }
+        
+        .voice-active:hover {
+            background: rgba(255, 107, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
+        }
+        
+        .voice-active.listening {
+            animation: pulse-slow 1.5s infinite, neon-glow 1s infinite alternate;
+            background: rgba(255, 107, 0, 0.4);
+        }
+        
+        .voice-hint {
+            position: fixed;
+            bottom: 5.5rem;
+            right: 2rem;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+        
+        .voice-active:hover .voice-hint {
+            opacity: 1;
+        }
+        
+        /* Cyberpunk Laser Beam */
+        .laser-beam {
+            position: fixed;
+            top: 0;
+            right: 20%;
+            width: 2px;
+            height: 0;
+            background: linear-gradient(to bottom, transparent, #FF6B00, transparent);
+            box-shadow: 0 0 10px #FF6B00;
+            z-index: -1;
+            transition: height 0.5s ease;
+        }
+        
+        /* Cyberpunk Highlight Effect */
+        .highlight-solution {
+            animation: highlight-pulse 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes highlight-pulse {
+            0% {
+                box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        /* Cyberpunk Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .preloader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 107, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #FF6B00;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Hide content initially */
+        .content-wrapper {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .content-wrapper.show {
+            opacity: 1;
+        }
+        
+        /* Cyberpunk Navigation */
+        nav {
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2) !important;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #FF6B00, #FF8C00);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Cyberpunk Form Elements */
+        input, select, textarea {
+            background: rgba(20, 20, 20, 0.7) !important;
+            border: 1px solid rgba(255, 107, 0, 0.2) !important;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #FF6B00 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3) !important;
+        }
+        
+        /* Cyberpunk Footer */
+        footer {
+            border-top: 1px solid rgba(255, 107, 0, 0.2) !important;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+        }
+        
+        /* Blog Post Specific Styles */
+        .blog-post-header {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(26, 26, 26, 0.9));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .blog-post-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNIDAgMCBMIDEwMCAwIEwgMTAwIDEwMCBMIDAgMTAwIEwgMCAwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDEwNywwLDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDAgMCBMIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMTA3LDAsMC4wMykiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwxMDcsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+');
+            opacity: 0.1;
+        }
+        
+        .blog-post-tag {
+            background: rgba(255, 107, 0, 0.2);
+            color: #FF6B00;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        
+        .blog-post-meta {
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.875rem;
+        }
+        
+        .blog-post-content {
+            line-height: 1.8;
+        }
+        
+        .blog-post-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #FF6B00;
+        }
+        
+        .blog-post-content h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #FF8C00;
+        }
+        
+        .blog-post-content p {
+            margin-bottom: 1.5rem;
+            color: rgba(229, 231, 235, 0.9);
+        }
+        
+        .blog-post-content ul, .blog-post-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .blog-post-content li {
+            margin-bottom: 0.5rem;
+            color: rgba(229, 231, 235, 0.9);
+        }
+        
+        .blog-post-content a {
+            color: #FF6B00;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255, 107, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .blog-post-content a:hover {
+            color: #FF8C00;
+            border-bottom-color: #FF8C00;
+        }
+        
+        .blog-post-content blockquote {
+            border-left: 3px solid #FF6B00;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: rgba(229, 231, 235, 0.7);
+        }
+        
+        .blog-post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+        
+        .results-table th {
+            background: rgba(255, 107, 0, 0.1);
+            color: #FF6B00;
+            font-family: 'Orbitron', sans-serif;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        .results-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+            color: rgba(229, 231, 235, 0.9);
+        }
+        
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .results-table tr:hover td {
+            background: rgba(255, 107, 0, 0.05);
+        }
+        
+        .cta-box {
+            background: rgba(255, 107, 0, 0.05);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 107, 0, 0) 0%,
+                rgba(255, 107, 0, 0.03) 50%,
+                rgba(255, 107, 0, 0) 100%
+            );
+            animation: shine 3s infinite;
+        }
+        
+        .author-card {
+            display: flex;
+            align-items: center;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .author-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            margin-right: 1.5rem;
+            border: 2px solid rgba(255, 107, 0, 0.3);
+        }
+        
+        .author-info h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #FF6B00;
+        }
+        
+        .author-info p {
+            color: rgba(229, 231, 235, 0.7);
+            margin-bottom: 0.5rem;
+        }
+        
+        .author-social a {
+            color: rgba(229, 231, 235, 0.7);
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .author-social a:hover {
+            color: #FF6B00;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .share-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(20, 20, 20, 0.7);
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+        
+        .share-button:hover {
+            background: rgba(255, 107, 0, 0.2);
+            color: #FF6B00;
+            border-color: rgba(255, 107, 0, 0.4);
+        }
+        
+        .related-post {
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .related-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+            border-color: rgba(255, 107, 0, 0.4);
+        }
+        
+        .related-post-image {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .related-post-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(10, 10, 10, 0.8));
+        }
+        
+        .related-post-content {
+            padding: 1.5rem;
+        }
+        
+        .related-post-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .related-post:hover .related-post-title {
+            color: #FF6B00;
+        }
+    </style>
+</head>
+<body>
+    <div id="threejs-background" class="fixed inset-0 w-full h-full z-[-1] pointer-events-none"></div>
+    
+    <!-- Cyberpunk Background Elements -->
+    <div class="laser-grid">
+        <div class="laser-line"></div>
+        <div class="laser-line"></div>
+        <div class="laser-line"></div>
+        <div class="laser-line"></div>
+    </div>
+    
+    <div class="data-particles" id="data-particles"></div>
+    
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-spinner"></div>
+    </div>
+    
+    <!-- Content Wrapper -->
+    <div class="content-wrapper" id="contentWrapper">
+        <!-- Navigation -->
+        <nav class="fixed w-full bg-dark-900 bg-opacity-80 backdrop-blur-md z-50 border-b border-orange-400/20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl font-bold gradient-text futuristic-heading neon-flicker">All-AtlasAi</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:block">
+                        <a href="blog.html" class="ml-4 px-4 py-2 btn-outline text-white rounded-md text-sm font-medium hover:border-orange-400 transition">
+                            ← Back to Blog
+                        </a>
+                    </div>
+                    
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-orange-400 hover:text-white hover:bg-orange-400/10 focus:outline-none transition" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                            <span class="sr-only">Open main menu</span>
+                            <!-- Hamburger icon -->
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <!-- Close icon (hidden by default) -->
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile menu (hidden by default) -->
+            <div class="md:hidden hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="blog.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-orange-400/10 border border-orange-400/20">
+                        ← Back to Blog
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Blog Post Content -->
+        <div class="pt-16">
+            <!-- Blog Post Header -->
+            <section class="blog-post-header py-20 relative">
+                <div class="scanline"></div>
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-left">
+                        <span class="blog-post-tag">Case Study</span>
+                        <h1 class="text-4xl md:text-5xl font-bold mt-6 mb-6 futuristic-heading glow-text">
+                            How NovaTech Solutions Increased Efficiency by 200% with AI-Powered Automation
+                        </h1>
+                        <div class="blog-post-meta mb-4">
+                            <span class="mr-3"><i class="far fa-calendar mr-1"></i> May 28, 2025</span>
+                            <span><i class="far fa-clock mr-1"></i> 7 min read</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-orange-400/10 border border-orange-400/20 flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-orange-400"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm text-gray-300">Written by</span>
+                                <span class="block text-orange-400">All-AtlasAi Team</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blog Post Content -->
+            <section class="py-16 section-bg">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="blog-post-content">
+                        <p class="text-xl text-gray-300 mb-8">
+                            Discover how NovaTech Solutions boosted operational efficiency by 200% using advanced AI agents and workflow automation. Real-world results, explained.
+                        </p>
+                        
+                        <div class="mb-12">
+                        </div>
+                        
+                        <h2>Introduction: The Efficiency Problem Most Companies Face</h2>
+                        <p>In today's fast-paced digital world, companies face constant pressure to do more with less. Manual processes, outdated tools, and inconsistent workflows often become bottlenecks that hinder growth. That was the case for NovaTech Solutions, a mid-sized tech company struggling with repetitive tasks and sluggish operations — until they discovered the power of AI-driven automation.</p>
+                        
+                        <h2>The Turning Point: Introducing AI Agents and Workflow Automation</h2>
+                        <p>NovaTech Solutions partnered with us to modernize their internal operations using a custom solution built on AI agents, automated workflows, and smart integrations. In less than three months, the company saw a 200% boost in efficiency — not just in numbers, but in tangible day-to-day improvements.</p>
+                        
+                        <h2>Challenges Faced Before Automation</h2>
+                        <p>Before adopting automation, NovaTech Solutions struggled with:</p>
+                        <ul>
+                            <li>Time-consuming manual data entry</li>
+                            <li>Inconsistent customer service replies</li>
+                            <li>Lack of integration between departments</li>
+                            <li>Delays in project approvals and task assignments</li>
+                            <li>Limited visibility into performance metrics</li>
+                        </ul>
+                        <p>These inefficiencies led to wasted resources, employee burnout, and missed opportunities.</p>
+                        
+                        <h2>The AI Solution We Implemented</h2>
+                        <p>We built a solution tailored to NovaTech's unique needs, including:</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                            <div class="holographic-card p-6 rounded-lg">
+                                <h3 class="text-xl font-bold mb-3 text-orange-400">AI Agents for Customer Support</h3>
+                                <p class="text-gray-300">24/7 smart agents that handle FAQs, triage tickets, and escalate complex queries.</p>
+                            </div>
+                            <div class="holographic-card p-6 rounded-lg">
+                                <h3 class="text-xl font-bold mb-3 text-orange-400">Automated Workflows</h3>
+                                <p class="text-gray-300">Tools like n8n connected their CRM, support, and internal databases to eliminate data silos.</p>
+                            </div>
+                            <div class="holographic-card p-6 rounded-lg">
+                                <h3 class="text-xl font-bold mb-3 text-orange-400">Natural Language Processing</h3>
+                                <p class="text-gray-300">Helped automate report generation and internal communication summaries.</p>
+                            </div>
+                            <div class="holographic-card p-6 rounded-lg">
+                                <h3 class="text-xl font-bold mb-3 text-orange-400">Custom Dashboards</h3>
+                                <p class="text-gray-300">Real-time analytics to track progress, flag bottlenecks, and support better decision-making.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>The Results: 200% Efficiency Boost in 90 Days</h2>
+                        <p>Here's a breakdown of what changed after implementation:</p>
+                        
+                        <div class="overflow-x-auto my-8">
+                            <table class="results-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Before</th>
+                                        <th>After</th>
+                                        <th>Improvement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Average Task Completion Time</td>
+                                        <td>3 days</td>
+                                        <td>1 day</td>
+                                        <td>66% faster</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Customer Response Time</td>
+                                        <td>8 hrs</td>
+                                        <td>1.5 hrs</td>
+                                        <td>81% faster</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Manual Errors</td>
+                                        <td>15/month</td>
+                                        <td>&lt;3/month</td>
+                                        <td>80% reduction</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Employee Satisfaction Score</td>
+                                        <td>6.2/10</td>
+                                        <td>8.7/10</td>
+                                        <td>+40% boost</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p>Within 90 days, NovaTech Solutions reported a 200% increase in operational efficiency — freeing up team members to focus on strategic work instead of repetitive tasks.</p>
+                        
+                        <h2>Why It Worked: Key Success Factors</h2>
+                        <p>The success of NovaTech's transformation can be attributed to several key factors:</p>
+                        
+                        <div class="cta-box my-12">
+                            <h3 class="text-2xl font-bold mb-4 text-orange-400">Key Takeaways</h3>
+                            <ul class="space-y-3">
+                                <li><strong>Tailored Automation:</strong> Off-the-shelf tools weren't enough. A custom AI-first approach made the difference.</li>
+                                <li><strong>Seamless Integration:</strong> Every tool was connected — from CRMs to email systems — ensuring data flowed smoothly.</li>
+                                <li><strong>Scalable Design:</strong> The system is ready to grow with the company as their needs evolve.</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>What You Can Learn from NovaTech Solutions</h2>
+                        <p>Based on NovaTech's experience, here are actionable insights for other businesses considering automation:</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                            <div class="bg-dark-800 p-6 rounded-lg border border-dark-700">
+                                <h3 class="text-lg font-bold mb-3 text-orange-400">Start Small, Scale Fast</h3>
+                                <p class="text-gray-300">Begin with automating repetitive tasks and scale up as you see results.</p>
+                            </div>
+                            <div class="bg-dark-800 p-6 rounded-lg border border-dark-700">
+                                <h3 class="text-lg font-bold mb-3 text-orange-400">Choose Flexibility</h3>
+                                <p class="text-gray-300">Use no-code tools and open-source platforms like n8n for more control.</p>
+                            </div>
+                            <div class="bg-dark-800 p-6 rounded-lg border border-dark-700">
+                                <h3 class="text-lg font-bold mb-3 text-orange-400">Measure Everything</h3>
+                                <p class="text-gray-300">Track KPIs to ensure your automation delivers real ROI.</p>
+                            </div>
+                        </div>
+            </section>
+            <!-- Navigation Buttons - Positioned Higher -->
+<div class="mt-8 mb-12 flex flex-col sm:flex-row justify-between gap-4">
+    <a href="blog-post.html" class="px-6 py-3 rounded-md text-center transition-all duration-300
+       bg-dark-800 border border-orange-400/30 hover:border-orange-400/60 
+       hover:bg-orange-400/10 hover:text-orange-400 hover:shadow-lg hover:shadow-orange-400/20
+       flex items-center justify-center neon-flicker">
+        <i class="fas fa-arrow-left mr-2"></i> Previous Post
+    </a>
+    <a href="blog.html" class="px-6 py-3 rounded-md text-center transition-all duration-300
+       bg-dark-800 border border-orange-400/30 hover:border-orange-400/60 
+       hover:bg-orange-400/10 hover:text-orange-400 hover:shadow-lg hover:shadow-orange-400/20
+       flex items-center justify-center neon-flicker">
+        <i class="fas fa-list mr-2"></i> All Posts
+    </a>
+    <a href="blog-post3.html" class="px-6 py-3 rounded-md text-center transition-all duration-300
+       bg-dark-800 border border-orange-400/30 hover:border-orange-400/60 
+       hover:bg-orange-400/10 hover:text-orange-400 hover:shadow-lg hover:shadow-orange-400/20
+       flex items-center justify-center neon-flicker">
+        Next Post <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+</div>
+
+        <!-- Footer -->
+        <footer class="bg-dark-900 border-t border-dark-700 relative overflow-hidden">
+            <!-- Circuit pattern overlay -->
+            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZjZjMDAiIG9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTM2IDM0LjUxNWMwIDEuMzgxLTEuMTIgMi41LTIuNSAyLjVoLTEuOTk0Yy0xLjM4MSAwLTIuNS0xLjEyLTIuNS0yLjVWMzBjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41SDMzLjVjMS4zOCAwIDIuNSAxLjEyIDIuNSAyLjV2NC41MTV6TTI0IDI0LjVjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDYuOTk0YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYyN2MwIDEuMzgxLTEuMTkgMi41LTIuNSAyLjVIMjYuNWMtMS4zOC0wLTIuNS0xLjEyLTIuNS0yLjV2LTIuNXpNMTIgMTguNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYxOC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXpNNDggMzAuNXYtMy4wMDdjMC0xLjM4MSAxLjEyLTIuNSAyLjUtMi41aDMuMDA3YzEuMzgxIDAgMi41IDEuMTIgMi41IDIuNVYzMC41YzAgMS4zODEtMS4xMiAyLjUtMi41IDIuNWgtMy4wMDcjLTEuMzgxIDAtMi41LTEuMTItMi41LTIuNXoiLz48L2c+PC9nPjwvc3ZnPg==');"></div>
+            
+            <!-- Glow elements -->
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500 rounded-full filter blur-[80px] opacity-10"></div>
+            <div class="absolute bottom-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[80px] opacity-10"></div>
+
+
+    <script>
+        // Wait for everything to load
+        window.addEventListener('load', function() {
+            // Hide preloader and show content
+            const preloader = document.getElementById('preloader');
+            const contentWrapper = document.getElementById('contentWrapper');
+            
+            preloader.classList.add('fade-out');
+            contentWrapper.classList.add('show');
+            
+            // Remove preloader after animation completes
+            setTimeout(() => {
+                preloader.remove();
+            }, 500);
+        });
+
+        // Create cyberpunk data particles
+        function createParticles() {
+            const container = document.getElementById('data-particles');
+            if (!container) return;
+            
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('data-particle');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                
+                // Random animation duration
+                const duration = Math.random() * 30 + 10;
+                
+                // Random delay
+                const delay = Math.random() * 10;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                
+                // Toggle between hamburger and close icon
+                const icons = this.querySelectorAll('svg');
+                icons.forEach(icon => icon.classList.toggle('hidden'));
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (mobileMenu && mobileMenuButton && 
+                !mobileMenu.contains(event.target) && 
+                !mobileMenuButton.contains(event.target) &&
+                !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                const icons = mobileMenuButton.querySelectorAll('svg');
+                icons[0].classList.remove('hidden');
+                icons[1].classList.add('hidden');
+            }
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        document.getElementById('mobile-menu-button').setAttribute('aria-expanded', 'false');
+                        const icons = document.getElementById('mobile-menu-button').querySelectorAll('svg');
+                        icons[0].classList.remove('hidden');
+                        icons[1].classList.add('hidden');
+                    }
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Initialize effects
+        createParticles();
+    </script>
+</body>
+</html>
